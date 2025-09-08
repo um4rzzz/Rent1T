@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+README (short):
+- This project uses Tailwind v4 with CSS variables for theming.
+- Theme is controlled via `data-theme` on <html> to prevent FOUC; see _document.tsx for bootstrap script.
+- Tokens below map to light (greens) and dark (red/black) palettes.
+- Use Tailwind classes with CSS vars, e.g., bg-[var(--bg)] text-[var(--text)].
+*/
+
+/* Design Tokens */
+html[data-theme="light"] {
+  --bg: #FFFFFF;
+  --surface: #F7FAF8;
+  --text: #0B1410;
+  --brand: #16A34A; /* green 600 */
+  --brand-600: #16A34A;
+  --brand-500: #22C55E;
+  --brand-300: #86EFAC;
+  --brand-200: #BBF7D0;
+  --muted: #6B7280;
+  --ring: color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html[data-theme="dark"] {
+  --bg: #0B0B0C;
+  --surface: #141416;
+  --text: #EDEDED;
+  --brand: #EF4444; /* red 500 */
+  --brand-600: #DC2626;
+  --brand-500: #EF4444;
+  --brand-300: #FCA5A5;
+  --brand-200: #FECACA;
+  --muted: #9CA3AF;
+  --ring: color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base styles */
+:root { color-scheme: light dark; }
+
+* { outline-color: var(--ring); }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth theme transition, respects prefers-reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme-transition="true"] body,
+  html[data-theme-transition="true"] * {
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, fill 150ms ease, stroke 150ms ease, box-shadow 150ms ease;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Utilities */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Scrollbar subtle styling */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--text) 15%, transparent); border-radius: 9999px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* Skeleton loaders */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--text) 6%, var(--bg));
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text) 8%, transparent), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Global hover/focus phasing effect for links and buttons */
+a:not(.no-phase), button:not(.no-phase) {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+a:not(.no-phase):hover,
+a:not(.no-phase):focus-visible,
+button:not(.no-phase):hover,
+button:not(.no-phase):focus-visible {
+  box-shadow: 0 0 0 2px #0B0B0C;
+  transform: translateY(-1px);
+  border-radius: 9999px;
+  background-color: #0B0B0C;
+  color: #FFFFFF;
+}
+
+/* Dark mode override: white background + white text on hover */
+html.dark a:not(.no-phase):hover,
+html.dark a:not(.no-phase):focus-visible,
+html.dark button:not(.no-phase):hover,
+html.dark button:not(.no-phase):focus-visible {
+  box-shadow: 0 0 0 2px #FFFFFF;
+  background-color: #FFFFFF;
+  color: #0B0B0C;
+}
+
+/* Dark mode: default (non-hover) state for ALL buttons → white bg + white text */
+html.dark button {
+  background-color: #FFFFFF !important;
+  color: #0B0B0C !important;
 }

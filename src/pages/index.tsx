@@ -1,115 +1,287 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Container, Box, Heading, Input, Button, SimpleGrid, HStack, IconButton, Grid, GridItem, Text } from "@chakra-ui/react";
+import { createPortal } from "react-dom";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { ThemeSync } from "@/components/ThemeSync";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// README: This page composes Chakra UI (for theming/state) with Tailwind (for layout/utility).
+// How to run: `npm run dev` then open http://localhost:3000
+// Stack: ChakraProvider wraps the app in `_app.tsx` with `src/theme/theme.ts`.
+// Both Chakra and Tailwind share palette/typography via theme files.
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+function HeroSearch() {
+  const [what, setWhat] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [dates, setDates] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [calOpen, setCalOpen] = useState(false);
 
-export default function Home() {
+  function CalendarPortal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      setMounted(true);
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden"; // scroll lock
+      const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
+    }, [onClose]);
+    if (!mounted) return null;
+    return createPortal(
+      <Box position="fixed" inset={0} zIndex={3000} onClick={onClose}>
+        <Box position="absolute" inset={0} bg="blackAlpha.400" />
+        <Box position="relative" display="flex" alignItems="flex-start" justifyContent="center" pt={{ base: 24, md: 32 }}>
+          <Box role="dialog" aria-modal="true" bg="surface" borderWidth="1px" p={3} borderRadius="lg" boxShadow="2xl" onClick={(e)=>e.stopPropagation()} tabIndex={-1}>
+            {children}
+          </Box>
+        </Box>
+      </Box>,
+      document.body
+    );
+  }
+
+  function RangeCalendar({ onApply, onClose, onReset }: { onApply: () => void; onClose: () => void; onReset: () => void }) {
+    const today = new Date();
+    const [year, setYear] = useState(today.getFullYear());
+    const [month, setMonth] = useState(today.getMonth()); // 0-11
+
+    const start = new Date(year, month, 1);
+    const startDay = start.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells: (Date | null)[] = [];
+    for (let i = 0; i < startDay; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+    while (cells.length % 7 !== 0) cells.push(null);
+
+    const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const isSelected = (d: Date) => {
+      if (!fromDate && !toDate) return false;
+      const s = fromDate ? new Date(fromDate).getTime() : NaN;
+      const e = toDate ? new Date(toDate).getTime() : NaN;
+      const x = d.getTime();
+      if (!isNaN(s) && isNaN(e)) return x === s;
+      if (!isNaN(s) && !isNaN(e)) return x >= s && x <= e;
+      return false;
+    };
+
+    const onPick = (d: Date) => {
+      if (!fromDate || (fromDate && toDate)) {
+        setFromDate(fmt(d));
+        setToDate("");
+      } else {
+        const s = new Date(fromDate);
+        if (d < s) {
+          setToDate(fromDate);
+          setFromDate(fmt(d));
+        } else {
+          setToDate(fmt(d));
+        }
+      }
+    };
+
+    return (
+      <Box>
+        <HStack justify="space-between" mb={2}>
+          <IconButton aria-label="Prev" size="sm" onClick={() => setMonth((m) => (m === 0 ? (setYear(year - 1), 11) : m - 1))}>‹</IconButton>
+          <Text fontWeight="medium">{start.toLocaleString(undefined, { month: "long", year: "numeric" })}</Text>
+          <IconButton aria-label="Next" size="sm" onClick={() => setMonth((m) => (m === 11 ? (setYear(year + 1), 0) : m + 1))}>›</IconButton>
+        </HStack>
+        <Grid templateColumns="repeat(7, 1fr)" gap={1}>
+          {['Su','Mo','Tu','We','Th','Fr','Sa'].map((d) => (
+            <GridItem key={d} textAlign="center" fontSize="sm" opacity={0.6}>{d}</GridItem>
+          ))}
+          {cells.map((cell, i) => (
+            <GridItem key={i}>
+              {cell ? (
+                <Button variant="ghost" w="100%" h={9} onClick={() => onPick(cell)} bg={isSelected(cell) ? "accent" : undefined} color={isSelected(cell) ? "#0B0B0C" : undefined}>
+                  {cell.getDate()}
+                </Button>
+              ) : (
+                <Box h={9} />
+              )}
+            </GridItem>
+          ))}
+        </Grid>
+        <HStack mt={3} justify="center" gap={2}>
+          <Button size="sm" variant="outline" onClick={() => { setFromDate(""); setToDate(""); onReset(); }}>Reset</Button>
+          <Button size="sm" variant="ghost" onClick={onClose}>Close</Button>
+          <Button size="sm" onClick={onApply}>Apply</Button>
+        </HStack>
+      </Box>
+    );
+  }
+  const whatOptions = ["Homes", "Cars", "Cameras", "Tools", "Yachts", "Boats", "Events", "Office"];
+  const onSubmit = (e: React.FormEvent) => { e.preventDefault(); alert("Demo search submitted"); };
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+    <section aria-label="Hero">
+      <Box position="absolute" inset={0} zIndex={-10}>
+        <Box h="64svh" minH="420px" w="full" overflow="hidden" borderBottomRadius="28px">
+          <Box h="full" w="full" bg="surface" />
+        </Box>
+      </Box>
+      <Container py={{ base: 8, md: 12 }}>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          <Heading as="h1" size="7xl" fontWeight="extrabold">Rent anything, anywhere.</Heading>
+        </motion.div>
+        <Box as="form" onSubmit={onSubmit} bg="surface" p={{ base: 4, md: 6 }} borderRadius="2xl" borderWidth="1px" backdropFilter="blur(4px)">
+          <SimpleGrid columns={{ base: 1, sm: 2, lg: 5 }} gap={4}>
+            <Box gridColumn={{ lg: "span 2" }}>
+              <Input id="what" list="what-list" placeholder="What" value={what} onChange={(e)=>setWhat(e.target.value)} aria-describedby="what-help" />
+              <datalist id="what-list">
+                {whatOptions.map((opt) => (<option key={opt} value={opt} />))}
+              </datalist>
+            </Box>
+            <Box position="relative">
+              <Input id="dates" placeholder="Dates" value={dates} readOnly onClick={() => setCalOpen(true)} />
+              {calOpen && (
+                <CalendarPortal onClose={() => setCalOpen(false)}>
+                  <RangeCalendar
+                    onApply={() => { setDates(fromDate && toDate ? `${fromDate} – ${toDate}` : fromDate || toDate); setCalOpen(false); }}
+                    onClose={() => setCalOpen(false)}
+                    onReset={() => setDates("")}
+                  />
+                </CalendarPortal>
+              )}
+            </Box>
+            <HStack>
+              <Input id="priceMin" inputMode="numeric" pattern="[0-9]*" placeholder="Min $" value={priceMin} onChange={(e)=>setPriceMin(e.target.value)} />
+              <Input id="priceMax" inputMode="numeric" pattern="[0-9]*" placeholder="Max $" value={priceMax} onChange={(e)=>setPriceMax(e.target.value)} />
+            </HStack>
+            <Button type="submit" bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Search</Button>
+          </SimpleGrid>
+        </Box>
+        {/* trust badges removed per request */}
+      </Container>
+    </section>
+  );
+}
+
+function CategoryGrid() {
+  const items = [
+    { name: "Cars", count: "2,400+" },
+    { name: "Homes", count: "1,100+" },
+    { name: "Cameras", count: "900+" },
+    { name: "Tools", count: "1,800+" },
+    { name: "Events", count: "300+" },
+    { name: "Boats", count: "120+" },
+    { name: "Office", count: "400+" },
+    { name: "Furniture", count: "2,000+" },
+  ];
+  return (
+    <section id="browse" aria-label="Categories">
+      <Container py={{ base: 8, md: 12 }}>
+        <Heading as="h2" size="lg" fontWeight="semibold">Explore top categories</Heading>
+        <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: 4, md: 6 }} mt={6}>
+          {items.map((c) => (
+            <Box key={c.name} bg="surface" borderRadius="2xl" borderWidth="1px" overflow="hidden" _hover={{ transform: "translateY(-4px)" }} transition="all 0.15s ease">
+              <Box aria-hidden w="full" pt="75%" bg="accent" opacity={0.15} />
+              <Box p={4}>
+                <HStack justify="space-between">
+                  <Heading as="h3" size="md" fontWeight="medium">{c.name}</Heading>
+                  <Box as="span" opacity={0.8}>{c.count} items</Box>
+                </HStack>
+              </Box>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Container>
+    </section>
+  );
+}
+
+type Listing = { id: number; title: string; price: number; location: string; rating: number; instant?: boolean };
+
+function FeaturedListings() {
+  const [openId, setOpenId] = useState<number | null>(null);
+  const listings: Listing[] = useMemo(() => [
+    { id: 1, title: "Cozy studio in downtown", price: 95, location: "Austin, TX", rating: 4.9, instant: true },
+    { id: 2, title: "Canon R6 kit with lenses", price: 45, location: "Seattle, WA", rating: 4.8 },
+    { id: 3, title: "Tesla Model Y Performance", price: 140, location: "San Jose, CA", rating: 4.7, instant: true },
+  ], []);
+  return (
+    <section aria-label="Featured listings">
+      <Container py={{ base: 8, md: 12 }}>
+        <Heading as="h2" size="lg" fontWeight="semibold">Featured listings</Heading>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 6, md: 8 }} mt={6}>
+          {listings.map((l) => (
+            <Box as="button" className="no-phase" key={l.id} textAlign="left" onClick={() => setOpenId(l.id)} borderWidth="1px" borderRadius="2xl" bg="surface" overflow="hidden" _hover={{ transform: "translateY(-4px)" }} transition="all 0.15s ease" aria-label={`Open details for ${l.title}`}>
+              <Box aria-hidden w="full" pt="75%" bg="accent" opacity={0.1} />
+              <Box p={4}>
+                <HStack gap={2}>
+                  <Heading as="h3" size="md" fontWeight="medium">{l.title}</Heading>
+                  {l.instant && (<Box ml="auto" as="span" bg="accent" color="#0B1410" borderRadius="full" px={2} fontSize="xs">Instant book</Box>)}
+                </HStack>
+                <HStack mt={2} opacity={0.8} gap={3}>
+                  <Box as="span">${l.price}/day</Box>
+                  <Box as="span">{l.location}</Box>
+                  <Box as="span" aria-label={`Rating ${l.rating} out of 5`}>★ {l.rating}</Box>
+                </HStack>
+              </Box>
+            </Box>
+          ))}
+        </SimpleGrid>
+        <AnimatePresence>
+          {openId !== null && (
+            <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.div role="dialog" aria-modal="true" aria-label="Listing details" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 10, opacity: 0 }} className="w-full max-w-lg rounded-2xl bg-[var(--bg)] p-5 shadow-xl">
+                <div className="aspect-[16/9] w-full skeleton rounded-xl" aria-hidden />
+                <div className="mt-4 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold">Quick preview</h3>
+                    <p className="text-md opacity-80">Seamless path to booking—this is a stubbed demo modal.</p>
+                  </div>
+                  <button className="focus-ring p-2 rounded" aria-label="Close" onClick={() => setOpenId(null)}>✕</button>
+                </div>
+                <div className="mt-4 flex justify-end gap-2">
+                  <button className="focus-ring px-4 py-2 rounded-lg border">Share</button>
+                  <Button className="h-11 px-6 rounded-full bg-[var(--brand)] text-black hover:bg-[var(--brand-600)]">Continue to book</Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Container>
+    </section>
+  );
+}
+
+
+
+
+function PrimaryCTABand() {
+  return (
+    <section aria-label="Call to action">
+      <Container py={{ base: 10, md: 14 }}>
+        <Box borderRadius="2xl" bg="accent" color={{ base: "#0B0B0C", _dark: "#FFFFFF" }} p={{ base: 6, md: 8 }} display="flex" flexDir={{ base: "column", md: "row" }} alignItems="center" justifyContent="space-between" gap={4}>
+          <Box>
+            <Heading as="h3" size="lg" fontWeight="semibold" color={{ base: "#0B0B0C", _dark: "#FFFFFF" }}>Ready to rent smarter?</Heading>
+            <Box as="p" fontSize="lg" opacity={0.9} color={{ base: "#0B0B0C", _dark: "#FFFFFF" }}>Join thousands of happy renters and owners today.</Box>
+          </Box>
+          <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Get started</Button>
+        </Box>
+      </Container>
+    </section>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <div id="top" className="min-h-screen">
+      <ThemeSync />
+      <Header />
+      <main>
+        <HeroSearch />
+        <CategoryGrid />
+        <FeaturedListings />
+        <PrimaryCTABand />
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Footer />
     </div>
   );
 }
+
+
