@@ -10,6 +10,7 @@ import { ThemeSync } from "@/components/ThemeSync";
 // How to run: `npm run dev` then open http://localhost:3000
 // Stack: ChakraProvider wraps the app in `_app.tsx` with `src/theme/theme.ts`.
 // Both Chakra and Tailwind share palette/typography via theme files.
+//final code push
 
 function HeroSearch() {
   const [what, setWhat] = useState("");
