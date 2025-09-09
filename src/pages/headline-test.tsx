@@ -19,6 +19,7 @@ export default function HeadlineTestPage() {
               Scroll down to see the animation replay when elements come back into view.
               The rolling dot travels under the text while each character hops as it passes.
               When the dot reaches the end, it becomes the final period and remains there.
+              On mobile, text wraps naturally and the dot follows a staircase-like path.
             </Text>
           </Box>
 
@@ -47,17 +48,17 @@ export default function HeadlineTestPage() {
             />
           </Box>
 
-          {/* Test 3: Long text with period */}
+          {/* Test 3: Long text with period that wraps on mobile */}
           <Box>
             <Text fontSize="lg" fontWeight="medium" color="text" mb={4}>
-              Long Text with Period (no wrapping):
+              Long Text with Period (wraps on mobile):
             </Text>
             <RollingDotHeadline 
-              text="This is a very long headline that should not wrap and the dot should travel the full width."
+              text="This is a very long headline that will wrap to multiple lines on mobile devices and the dot should follow a staircase path."
               dotColor="#ff6a00"
               jumpHeight={8}
               stagger={0.03}
-              className="text-3xl font-semibold"
+              className="text-2xl md:text-3xl font-semibold"
             />
           </Box>
 
@@ -105,7 +106,21 @@ export default function HeadlineTestPage() {
             </Text>
           </Box>
 
-          {/* Test 6: Final test at bottom */}
+          {/* Test 6: Mobile-specific wrapping test */}
+          <Box>
+            <Text fontSize="lg" fontWeight="medium" color="text" mb={4}>
+              Mobile Wrapping Test (resize window to see effect):
+            </Text>
+            <RollingDotHeadline 
+              text="This headline will definitely wrap on small screens and the dot should follow the text flow like a staircase."
+              dotColor="var(--amber-600)"
+              jumpHeight={10}
+              stagger={0.06}
+              className="text-xl sm:text-2xl md:text-3xl font-bold"
+            />
+          </Box>
+
+          {/* Test 7: Final test at bottom */}
           <Box>
             <Text fontSize="lg" fontWeight="medium" color="text" mb={4}>
               Final Test (should animate when scrolled into view):

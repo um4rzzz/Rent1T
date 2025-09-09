@@ -12,6 +12,13 @@ type Props = {
   className?: string;        // additional CSS classes
 };
 
+interface TextPosition {
+  x: number;
+  y: number;
+  char: string;
+  index: number;
+}
+
 export default function RollingDotHeadline({
   text,
   dotColor = "currentColor",
@@ -32,20 +39,45 @@ export default function RollingDotHeadline({
   const measureRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: inViewAmount, margin: "0px 0px -10% 0px" });
 
-  const [width, setWidth] = useState(0);
+  const [textPositions, setTextPositions] = useState<TextPosition[]>([]);
   const [tick, setTick] = useState(0);      // remount key for restart
   const [periodVisible, setPeriodVisible] = useState(!hasFinalDot); // if no dot requested, show immediately
   const [showDot, setShowDot] = useState(hasFinalDot);              // only show rolling dot if we have a final dot
 
-  // measure text width
+  // measure text positions for multi-line support
   useEffect(() => {
     if (!measureRef.current) return;
-    const update = () => setWidth(measureRef.current!.getBoundingClientRect().width);
-    update();
-    const ro = new ResizeObserver(update);
+    
+    const updatePositions = () => {
+      const spans = measureRef.current!.querySelectorAll('span');
+      const positions: TextPosition[] = [];
+      
+      spans.forEach((span, index) => {
+        const rect = span.getBoundingClientRect();
+        const containerRect = measureRef.current!.getBoundingClientRect();
+        positions.push({
+          x: rect.left - containerRect.left,
+          y: rect.top - containerRect.top,
+          char: span.textContent || '',
+          index
+        });
+      });
+      
+      setTextPositions(positions);
+    };
+    
+    // Wait for layout to settle
+    const timeoutId = setTimeout(updatePositions, 100);
+    const ro = new ResizeObserver(() => {
+      setTimeout(updatePositions, 50);
+    });
+    
     ro.observe(measureRef.current);
-    return () => ro.disconnect();
-  }, [baseText]);
+    return () => {
+      clearTimeout(timeoutId);
+      ro.disconnect();
+    };
+  }, [baseText, tick]);
 
   // replay on view
   useEffect(() => {
@@ -67,22 +99,27 @@ export default function RollingDotHeadline({
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReduced) {
     return (
-      <span aria-label={text} style={{ whiteSpace: "nowrap" }} className={className}>
+      <span aria-label={text} className={className}>
         {text}
       </span>
     );
   }
 
   return (
-    <div ref={rootRef} aria-label={text} style={{ position: "relative", display: "inline-block" }} className={className}>
-      <div key={tick} ref={measureRef} style={{ position: "relative", whiteSpace: "nowrap" }}>
+    <div ref={rootRef} aria-label={text} style={{ position: "relative", display: "block" }} className={className}>
+      <div key={tick} ref={measureRef} style={{ position: "relative" }}>
         {chars.map((ch, i) => (
           <motion.span
             key={i + ch}
             initial={{ y: 0 }}
             animate={{ y: [0, -jumpHeight, 0] }}
             transition={{ delay: i * stagger, duration: 0.5, ease: "easeOut" }}
-            style={{ display: "inline-block", marginRight: ch === " " ? "0.25ch" : 0 }}
+            style={{ 
+              display: "inline-block", 
+              marginRight: ch === " " ? "0.25ch" : 0,
+              position: "relative",
+              zIndex: 2, // Text above the dot
+            }}
           >
             {ch === " " ? "\u00A0" : ch}
           </motion.span>
@@ -94,18 +131,34 @@ export default function RollingDotHeadline({
             initial={{ scale: 0.6, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            style={{ display: "inline-block" }}
+            style={{ 
+              display: "inline-block",
+              position: "relative",
+              zIndex: 2, // Period above the dot
+            }}
           >
             .
           </motion.span>
         )}
 
-        {/* Rolling dot that becomes the period */}
-        {showDot && hasFinalDot && (
+        {/* Rolling dot that becomes the period - follows staircase path */}
+        {showDot && hasFinalDot && textPositions.length > 0 && (
           <motion.div
-            initial={{ x: -12, rotate: 0 }}
-            animate={{ x: width, rotate: 720 }}
-            transition={{ duration: totalDuration, ease: "easeInOut" }}
+            initial={{ 
+              x: textPositions[0]?.x - 12 || -12, 
+              y: textPositions[0]?.y + 20 || 20, 
+              rotate: 0 
+            }}
+            animate={{ 
+              x: textPositions[textPositions.length - 1]?.x + 8 || 0,
+              y: textPositions[textPositions.length - 1]?.y + 20 || 20,
+              rotate: 720 
+            }}
+            transition={{ 
+              duration: totalDuration, 
+              ease: "easeInOut",
+              times: textPositions.map((_, i) => i / (textPositions.length - 1))
+            }}
             onAnimationComplete={() => {
               setShowDot(false);      // hide dot
               setPeriodVisible(true); // show period at the end
@@ -113,13 +166,16 @@ export default function RollingDotHeadline({
             style={{
               position: "absolute",
               left: 0,
-              bottom: -8,            // tweak to sit just under baseline
+              top: 0,
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
-              background: dotColor,
-              filter: "drop-shadow(0 2px 6px rgba(0,0,0,.35))",
+              background: "#ffffff", // White dot
+              border: "2px solid #000000", // Black border for visibility
+              filter: "drop-shadow(0 2px 6px rgba(0,0,0,.5))",
               pointerEvents: "none",
+              transformOrigin: "center",
+              zIndex: -1, // Put dot behind text
             }}
             aria-hidden="true"
           />
