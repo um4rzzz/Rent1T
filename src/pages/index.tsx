@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ThemeSync } from "@/components/ThemeSync";
+import { RollingDotHeadline } from "@/components/RollingDotHeadline";
 
 // README: This page composes Chakra UI (for theming/state) with Tailwind (for layout/utility).
 // How to run: `npm run dev` then open http://localhost:3000
@@ -87,9 +88,9 @@ function HeroSearch() {
     return (
       <Box>
         <HStack justify="space-between" mb={2}>
-          <IconButton aria-label="Prev" size="sm" onClick={() => setMonth((m) => (m === 0 ? (setYear(year - 1), 11) : m - 1))}>‹</IconButton>
+          <IconButton className="calendar-button" aria-label="Prev" size="sm" onClick={() => setMonth((m) => (m === 0 ? (setYear(year - 1), 11) : m - 1))}>‹</IconButton>
           <Text fontWeight="medium">{start.toLocaleString(undefined, { month: "long", year: "numeric" })}</Text>
-          <IconButton aria-label="Next" size="sm" onClick={() => setMonth((m) => (m === 11 ? (setYear(year + 1), 0) : m + 1))}>›</IconButton>
+          <IconButton className="calendar-button" aria-label="Next" size="sm" onClick={() => setMonth((m) => (m === 11 ? (setYear(year + 1), 0) : m + 1))}>›</IconButton>
         </HStack>
         <Grid templateColumns="repeat(7, 1fr)" gap={1}>
           {['Su','Mo','Tu','We','Th','Fr','Sa'].map((d) => (
@@ -98,7 +99,7 @@ function HeroSearch() {
           {cells.map((cell, i) => (
             <GridItem key={i}>
               {cell ? (
-                <Button className="button" variant="ghost" w="100%" h={9} onClick={() => onPick(cell)} bg={isSelected(cell) ? "accent" : undefined} color={isSelected(cell) ? "#0B0B0C" : undefined}>
+                <Button className="calendar-button" variant="ghost" w="100%" h={9} onClick={() => onPick(cell)} bg={isSelected(cell) ? "accent" : undefined} color={isSelected(cell) ? "#0B0B0C" : undefined}>
                   {cell.getDate()}
                 </Button>
               ) : (
@@ -108,9 +109,9 @@ function HeroSearch() {
           ))}
         </Grid>
         <HStack mt={3} justify="center" gap={2}>
-          <Button className="button" size="sm" variant="outline" onClick={() => { setFromDate(""); setToDate(""); onReset(); }}>Reset</Button>
-          <Button className="button" size="sm" variant="ghost" onClick={onClose}>Close</Button>
-          <Button className="button" size="sm" onClick={onApply}>Apply</Button>
+          <Button className="calendar-button" size="sm" variant="outline" onClick={() => { setFromDate(""); setToDate(""); onReset(); }}>Reset</Button>
+          <Button className="calendar-button" size="sm" variant="ghost" onClick={onClose}>Close</Button>
+          <Button className="calendar-button" size="sm" onClick={onApply}>Apply</Button>
         </HStack>
       </Box>
     );
@@ -126,7 +127,15 @@ function HeroSearch() {
       </Box>
       <Container py={{ base: 8, md: 12 }}>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-          <Heading as="h1" size="7xl" fontWeight="extrabold">Rent anything, anywhere.</Heading>
+          <Heading as="h1" size="7xl" fontWeight="extrabold">
+            <RollingDotHeadline 
+              text="Rent anything, anywhere."
+              dotColor="var(--brand)"
+              jumpHeight={12}
+              stagger={0.08}
+              className="text-[12vw] md:text-[80px] lg:text-[96px] leading-[0.95]"
+            />
+          </Heading>
         </motion.div>
         <Box as="form" onSubmit={onSubmit} bg="surface" p={{ base: 4, md: 6 }} borderRadius="2xl" borderWidth="1px" backdropFilter="blur(4px)">
           <SimpleGrid columns={{ base: 1, sm: 2, lg: 5 }} gap={4}>

@@ -34,7 +34,7 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   /* Global button styles with warm orange/amber fill */
-  button.button,
+  button.button:not(.calendar-button),
   [data-ambient="amber"] {
     position: relative;
     overflow: hidden;
@@ -190,5 +190,43 @@ export const GlobalStyles = createGlobalStyle`
   [data-ambient="amber"]:focus-visible {
     outline: 3px solid var(--amber-600);
     outline-offset: 2px;
+  }
+
+  /* Calendar button styles - clean functional appearance */
+  button.calendar-button {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    animation: none !important;
+    position: relative !important;
+    overflow: visible !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+  }
+
+  button.calendar-button:hover {
+    background: var(--accent) !important;
+    color: var(--text) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  button.calendar-button:focus-visible {
+    outline: 2px solid var(--ring) !important;
+    outline-offset: 1px !important;
+    box-shadow: none !important;
+  }
+
+  button.calendar-button::before,
+  button.calendar-button::after {
+    display: none !important;
   }
 `;

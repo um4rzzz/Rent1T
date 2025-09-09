@@ -1,14 +1,19 @@
 import React from 'react';
 import { Box, VStack, HStack, Text } from '@chakra-ui/react';
 import { Button } from './ui/Button';
+import { RollingDotHeadline } from './RollingDotHeadline';
 
 export function ButtonTest() {
   return (
     <Box p={8} bg="bg" minH="100vh">
       <VStack gap={8} align="start">
-        <Text fontSize="2xl" fontWeight="bold" color="text">
-          Warm Orange/Amber Button Test
-        </Text>
+        <RollingDotHeadline 
+          text="Warm Orange/Amber Button Test"
+          dotColor="var(--brand)"
+          jumpHeight={8}
+          stagger={0.05}
+          className="text-2xl font-bold"
+        />
         
         <VStack gap={4} align="start">
           <Text fontSize="lg" color="text">Button Sizes:</Text>
