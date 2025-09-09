@@ -40,6 +40,10 @@ html[data-theme="dark"] {
 
 * { outline-color: var(--ring); }
 
+html {
+  background-color: var(--bg);
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
@@ -64,10 +68,31 @@ body {
   outline-offset: 2px;
 }
 
-/* Scrollbar subtle styling */
-*::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--text) 15%, transparent); border-radius: 9999px; }
-*::-webkit-scrollbar-track { background: transparent; }
+/* Scrollbar styling - matches theme background */
+*::-webkit-scrollbar { 
+  width: 10px; 
+  height: 10px; 
+}
+
+*::-webkit-scrollbar-thumb { 
+  background: var(--bg); 
+  border-radius: 9999px; 
+  border: 2px solid var(--bg);
+}
+
+*::-webkit-scrollbar-track { 
+  background: var(--bg); 
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--bg);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: var(--bg) var(--bg);
+  scrollbar-width: thin;
+}
 
 /* Skeleton loaders */
 .skeleton {
