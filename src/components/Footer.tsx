@@ -45,7 +45,7 @@ export function Footer() {
         <Flex py={6} gap={4} direction={{ base: "column", md: "row" }} align={{ md: "center" }} justify={{ md: "space-between" }}>
           <Flex as="form" gap={2} onSubmit={(e) => { e.preventDefault(); if (emailValid) alert("Thanks! (demo)"); }}>
             <Input aria-label="Email address" placeholder="Email for updates" value={email} onChange={(e)=>setEmail(e.target.value)} />
-            <Button type="submit" disabled={!emailValid}>Subscribe</Button>
+            <Button className="button" type="submit" disabled={!emailValid}>Subscribe</Button>
           </Flex>
           <Flex gap={3} opacity={0.8} fontSize="lg">
             <select aria-label="Language" style={{ height: 44, padding: "0 8px", borderRadius: 6, background: "transparent" }}>

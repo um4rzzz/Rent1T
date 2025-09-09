@@ -98,7 +98,7 @@ function HeroSearch() {
           {cells.map((cell, i) => (
             <GridItem key={i}>
               {cell ? (
-                <Button variant="ghost" w="100%" h={9} onClick={() => onPick(cell)} bg={isSelected(cell) ? "accent" : undefined} color={isSelected(cell) ? "#0B0B0C" : undefined}>
+                <Button className="button" variant="ghost" w="100%" h={9} onClick={() => onPick(cell)} bg={isSelected(cell) ? "accent" : undefined} color={isSelected(cell) ? "#0B0B0C" : undefined}>
                   {cell.getDate()}
                 </Button>
               ) : (
@@ -108,9 +108,9 @@ function HeroSearch() {
           ))}
         </Grid>
         <HStack mt={3} justify="center" gap={2}>
-          <Button size="sm" variant="outline" onClick={() => { setFromDate(""); setToDate(""); onReset(); }}>Reset</Button>
-          <Button size="sm" variant="ghost" onClick={onClose}>Close</Button>
-          <Button size="sm" onClick={onApply}>Apply</Button>
+          <Button className="button" size="sm" variant="outline" onClick={() => { setFromDate(""); setToDate(""); onReset(); }}>Reset</Button>
+          <Button className="button" size="sm" variant="ghost" onClick={onClose}>Close</Button>
+          <Button className="button" size="sm" onClick={onApply}>Apply</Button>
         </HStack>
       </Box>
     );
@@ -152,7 +152,7 @@ function HeroSearch() {
               <Input id="priceMin" inputMode="numeric" pattern="[0-9]*" placeholder="Min $" value={priceMin} onChange={(e)=>setPriceMin(e.target.value)} />
               <Input id="priceMax" inputMode="numeric" pattern="[0-9]*" placeholder="Max $" value={priceMax} onChange={(e)=>setPriceMax(e.target.value)} />
             </HStack>
-            <Button type="submit" bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Search</Button>
+            <Button className="button" type="submit">Search</Button>
           </SimpleGrid>
         </Box>
         {/* trust badges removed per request */}
@@ -238,8 +238,8 @@ function FeaturedListings() {
                   <button className="focus-ring p-2 rounded" aria-label="Close" onClick={() => setOpenId(null)}>✕</button>
                 </div>
                 <div className="mt-4 flex justify-end gap-2">
-                  <button className="focus-ring px-4 py-2 rounded-lg border">Share</button>
-                  <Button className="h-11 px-6 rounded-full bg-[var(--brand)] text-black hover:bg-[var(--brand-600)]">Continue to book</Button>
+                  <button className="button focus-ring px-4 py-2 rounded-lg border">Share</button>
+                  <Button className="button h-11 px-6 rounded-full bg-[var(--brand)] text-black hover:bg-[var(--brand-600)]">Continue to book</Button>
                 </div>
               </motion.div>
             </motion.div>
@@ -262,7 +262,7 @@ function PrimaryCTABand() {
             <Heading as="h3" size="lg" fontWeight="semibold" color={{ base: "#0B0B0C", _dark: "#FFFFFF" }}>Ready to rent smarter?</Heading>
             <Box as="p" fontSize="lg" opacity={0.9} color={{ base: "#0B0B0C", _dark: "#FFFFFF" }}>Join thousands of happy renters and owners today.</Box>
           </Box>
-          <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Get started</Button>
+          <Button className="button">Get started</Button>
         </Box>
       </Container>
     </section>

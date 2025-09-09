@@ -17,8 +17,8 @@ export function Header() {
           </HStack>
           <HStack gap={3} display={{ base: "none", md: "flex" }}>
             <ThemeToggle />
-            <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Sign in</Button>
-            <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>List your item</Button>
+            <Button className="button">Sign in</Button>
+            <Button className="button">List your item</Button>
           </HStack>
           <Button aria-label="Open menu" display={{ base: "inline-flex", md: "none" }} onClick={() => setOpen(true)} variant="ghost">
             ☰
@@ -36,8 +36,8 @@ export function Header() {
               <Link href="#help" onClick={() => setOpen(false)}>Help</Link>
               <Flex gap={3} pt={2}>
                 <ThemeToggle />
-                <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>Sign in</Button>
-                <Button bg="#0B0B0C" color="#FFFFFF" _hover={{ boxShadow: "0 0 0 2px #0B0B0C", transform: "translateY(-1px)" }}>List your item</Button>
+                <Button className="button">Sign in</Button>
+                <Button className="button">List your item</Button>
               </Flex>
             </Flex>
           </Box>
