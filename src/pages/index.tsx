@@ -1,22 +1,16 @@
 import { useMemo, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+ 
 import { Container, Box, Heading, Input, Button, SimpleGrid, HStack, IconButton, Grid, GridItem, Text } from "@chakra-ui/react";
 import { createPortal } from "react-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ThemeSync } from "@/components/ThemeSync";
-import { RollingDotHeadline } from "@/components/RollingDotHeadline";
 
-// README: This page composes Chakra UI (for theming/state) with Tailwind (for layout/utility).
-// How to run: `npm run dev` then open http://localhost:3000
-// Stack: ChakraProvider wraps the app in `_app.tsx` with `src/theme/theme.ts`.
-// Both Chakra and Tailwind share palette/typography via theme files.
-//final code push
+ 
 
 function HeroSearch() {
   const [what, setWhat] = useState("");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
+  
   const [dates, setDates] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -116,7 +110,7 @@ function HeroSearch() {
       </Box>
     );
   }
-  const whatOptions = ["Homes", "Cars", "Cameras", "Tools", "Yachts", "Boats", "Events", "Office"];
+  
   const onSubmit = (e: React.FormEvent) => { e.preventDefault(); alert("Demo search submitted"); };
   return (
     <section aria-label="Hero">
@@ -126,24 +120,14 @@ function HeroSearch() {
         </Box>
       </Box>
       <Container py={{ base: 8, md: 12 }}>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-          <Heading as="h1" size="7xl" fontWeight="extrabold">
-            <RollingDotHeadline 
-              text="Rent anything, anywhere."
-              dotColor="var(--brand)"
-              jumpHeight={12}
-              stagger={0.08}
-              className="text-[12vw] md:text-[80px] lg:text-[96px] leading-[0.95]"
-            />
-          </Heading>
-        </motion.div>
+        <Heading as="h1" size="7xl" fontWeight="extrabold">
+          Rent anything, anywhere.
+        </Heading>
         <Box as="form" onSubmit={onSubmit} bg="surface" p={{ base: 4, md: 6 }} borderRadius="2xl" borderWidth="1px" backdropFilter="blur(4px)">
           <SimpleGrid columns={{ base: 1, sm: 2, lg: 5 }} gap={4}>
             <Box gridColumn={{ lg: "span 2" }}>
               <Input id="what" list="what-list" placeholder="What" value={what} onChange={(e)=>setWhat(e.target.value)} aria-describedby="what-help" />
-              <datalist id="what-list">
-                {whatOptions.map((opt) => (<option key={opt} value={opt} />))}
-              </datalist>
+              
             </Box>
             <Box position="relative">
               <Input id="dates" placeholder="Dates" value={dates} readOnly onClick={() => setCalOpen(true)} />
@@ -157,10 +141,7 @@ function HeroSearch() {
                 </CalendarPortal>
               )}
             </Box>
-            <HStack>
-              <Input id="priceMin" inputMode="numeric" pattern="[0-9]*" placeholder="Min $" value={priceMin} onChange={(e)=>setPriceMin(e.target.value)} />
-              <Input id="priceMax" inputMode="numeric" pattern="[0-9]*" placeholder="Max $" value={priceMax} onChange={(e)=>setPriceMax(e.target.value)} />
-            </HStack>
+            
             <Button className="button" type="submit">Search</Button>
           </SimpleGrid>
         </Box>
@@ -234,33 +215,11 @@ function FeaturedListings() {
             </Box>
           ))}
         </SimpleGrid>
-        <AnimatePresence>
-          {openId !== null && (
-            <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <motion.div role="dialog" aria-modal="true" aria-label="Listing details" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 10, opacity: 0 }} className="w-full max-w-lg rounded-2xl bg-[var(--bg)] p-5 shadow-xl">
-                <div className="aspect-[16/9] w-full skeleton rounded-xl" aria-hidden />
-                <div className="mt-4 flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-semibold">Quick preview</h3>
-                    <p className="text-md opacity-80">Seamless path to booking—this is a stubbed demo modal.</p>
-                  </div>
-                  <button className="focus-ring p-2 rounded" aria-label="Close" onClick={() => setOpenId(null)}>✕</button>
-                </div>
-                <div className="mt-4 flex justify-end gap-2">
-                  <button className="button focus-ring px-4 py-2 rounded-lg border">Share</button>
-                  <Button className="button h-11 px-6 rounded-full bg-[var(--brand)] text-black hover:bg-[var(--brand-600)]">Continue to book</Button>
-        </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        
       </Container>
     </section>
   );
 }
-
-
-
 
 function PrimaryCTABand() {
   return (
@@ -293,5 +252,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-
