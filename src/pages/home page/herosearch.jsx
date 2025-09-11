@@ -123,13 +123,17 @@ export default function HeroSearch() {
         <Box as="form" onSubmit={onSubmit} bg="surface" p={{ base: 4, md: 6 }} borderRadius="2xl" borderWidth="1px" backdropFilter="blur(4px)">
           <SimpleGrid columns={{ base: 1, sm: 2, lg: 5 }} gap={4}>
             <Box gridColumn={{ lg: "span 2" }}>
-              <Input id="what" list="what-list" placeholder="What" value={what} onChange={(e)=>setWhat(e.target.value)} aria-describedby="what-help" />
+              <div className="search-field__wrap">
+                <Input className="search-field" id="what" list="what-list" placeholder="What" value={what} onChange={(e)=>setWhat(e.target.value)} aria-describedby="what-help" />
+              </div>
               <datalist id="what-list">
                 {whatOptions.map((opt) => (<option key={opt} value={opt} />))}
               </datalist>
             </Box>
             <Box position="relative">
-              <Input id="dates" placeholder="Dates" value={dates} readOnly onClick={() => setCalOpen(true)} />
+              <div className="search-field__wrap">
+                <Input className="search-field" id="dates" placeholder="Dates" value={dates} readOnly onClick={() => setCalOpen(true)} />
+              </div>
               {calOpen && (
                 <CalendarPortal onClose={() => setCalOpen(false)}>
                   <RangeCalendar
@@ -145,8 +149,12 @@ export default function HeroSearch() {
               )}
             </Box>
             <HStack>
-              <Input id="priceMin" inputMode="numeric" pattern="[0-9]*" placeholder="Min $" value={priceMin} onChange={(e)=>setPriceMin(e.target.value)} />
-              <Input id="priceMax" inputMode="numeric" pattern="[0-9]*" placeholder="Max $" value={priceMax} onChange={(e)=>setPriceMax(e.target.value)} />
+              <div className="search-field__wrap">
+                <Input className="search-field" id="priceMin" inputMode="numeric" pattern="[0-9]*" placeholder="Min $" value={priceMin} onChange={(e)=>setPriceMin(e.target.value)} />
+              </div>
+              <div className="search-field__wrap">
+                <Input className="search-field" id="priceMax" inputMode="numeric" pattern="[0-9]*" placeholder="Max $" value={priceMax} onChange={(e)=>setPriceMax(e.target.value)} />
+              </div>
             </HStack>
             <Button className="button" type="submit">Search</Button>
           </SimpleGrid>
