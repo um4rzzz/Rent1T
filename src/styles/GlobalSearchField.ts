@@ -7,11 +7,13 @@ const breathe = keyframes`
 
 export const GlobalSearchField = createGlobalStyle`
   :root{
-    --amber-600:#ff6a00; --amber-500:#ff8a00; --amber-300:#ffc38a;
+    --amber-600:#F77E2D; --amber-500:#FF9A54; --amber-300:#FFD1B0;
+    --cosmic-700:#C96522; --cosmic-600:#F77E2D; --cosmic-500:#FF9A54; --cosmic-300:#FFD1B0;
     --sf-bg:#f1f1f1; --sf-text:#111; --sf-wrap:rgba(255,255,255,.35);
   }
   [data-theme="dark"]{
     --sf-bg:#141414; --sf-text:#fafafa; --sf-wrap:rgba(255,255,255,.06);
+    --amber-600:#F77E2D; --amber-500:#FF8E40; --amber-300:#FFC8A0;
   }
 
   .search-field__wrap{
@@ -31,8 +33,8 @@ export const GlobalSearchField = createGlobalStyle`
     content:"";
     position:absolute; inset:0; z-index:-1; border-radius:20px; filter: blur(22px);
     background:
-      radial-gradient(40% 40% at 30% 70%, rgba(255,138,0,.18), transparent 70%),
-      radial-gradient(35% 35% at 70% 30%, rgba(255,209,153,.16), transparent 70%);
+      radial-gradient(40% 40% at 30% 70%, color-mix(in srgb, var(--amber-600) 28%, transparent), transparent 70%),
+      radial-gradient(35% 35% at 70% 30%, color-mix(in srgb, var(--amber-300) 22%, transparent), transparent 70%);
   }
 
   /* The input itself: neumorphic depth with inset shadow */
@@ -72,7 +74,7 @@ export const GlobalSearchField = createGlobalStyle`
       0 0 0 2px #fff,
       0 0 0 4px var(--amber-500),
       0 8px 26px rgba(0,0,0,.18),
-      0 0 38px rgba(255,138,0,.22);
+      0 0 36px color-mix(in srgb, var(--amber-500) 35%, transparent);
   }
 
   /* Intensify while focused */

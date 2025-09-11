@@ -13,10 +13,9 @@ const StyledButton = styled.button<ButtonProps>`
   overflow: hidden;
   background: linear-gradient(
     135deg,
-    var(--amber-600),
-    var(--amber-500),
-    var(--amber-300),
-    var(--amber-500)
+    var(--amber-600) 0%,
+    var(--amber-500) 45%,
+    var(--amber-300) 100%
   );
   color: #000000;
   border: 1px solid var(--amber-600);
@@ -67,15 +66,15 @@ const StyledButton = styled.button<ButtonProps>`
     transform: translateY(-2px);
     background: linear-gradient(
       135deg,
-      #ff7a00,
-      #ff9a00,
-      #ffd38a,
-      #ff9a00
+      var(--amber-600) 0%,
+      var(--amber-500) 45%,
+      var(--amber-300) 100%
     );
-    box-shadow: 
-      0 0 30px rgba(255, 106, 0, 0.7),
-      0 0 50px rgba(255, 106, 0, 0.5),
-      0 0 70px rgba(255, 106, 0, 0.3);
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px var(--amber-500),
+      0 8px 26px rgba(0,0,0,.18),
+      0 0 36px color-mix(in srgb, var(--amber-500) 35%, transparent);
   }
 
   /* Amber glow effect layer */
@@ -88,11 +87,10 @@ const StyledButton = styled.button<ButtonProps>`
     bottom: -2px;
     background: conic-gradient(
       from 0deg,
-      var(--amber-600),
-      var(--amber-500),
-      var(--amber-300),
-      var(--amber-500),
-      var(--amber-600)
+      var(--amber-600) 0%,
+      var(--amber-500) 35%,
+      var(--amber-300) 70%,
+      var(--amber-600) 100%
     );
     border-radius: 9999px;
     z-index: -1;
@@ -111,11 +109,10 @@ const StyledButton = styled.button<ButtonProps>`
     bottom: -4px;
     background: conic-gradient(
       from 0deg,
-      #ff7a00,
-      #ff9a00,
-      #ffd38a,
-      #ff9a00,
-      #ff7a00
+      var(--amber-600) 0%,
+      var(--amber-500) 35%,
+      var(--amber-300) 70%,
+      var(--amber-600) 100%
     );
     border-radius: 9999px;
     z-index: -2;

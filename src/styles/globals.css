@@ -34,6 +34,17 @@ README (short):
 }
 
 /* Design Tokens */
+:root {
+  /* legacy names kept */
+  --amber-600: #F77E2D; /* base */
+  --amber-500: #FF9A54; /* highlight */
+  --amber-300: #FFD1B0; /* soft */
+  /* canonical aliases */
+  --cosmic-700: #C96522;
+  --cosmic-600: #F77E2D;
+  --cosmic-500: #FF9A54;
+  --cosmic-300: #FFD1B0;
+}
 html[data-theme="light"] {
   --bg: #FFFFFF;
   --surface: #F7FAF8;
@@ -45,9 +56,9 @@ html[data-theme="light"] {
   --brand-200: #BBF7D0;
   --muted: #6B7280;
   --ring: color-mix(in srgb, var(--brand) 60%, transparent);
-  --amber-600: #ff6a00;
-  --amber-500: #ff8a00;
-  --amber-300: #ffc38a;
+  --amber-600: #F77E2D;
+  --amber-500: #FF9A54;
+  --amber-300: #FFD1B0;
 }
 
 html[data-theme="dark"] {
@@ -61,9 +72,9 @@ html[data-theme="dark"] {
   --brand-200: #FECACA;
   --muted: #9CA3AF;
   --ring: color-mix(in srgb, var(--brand) 60%, transparent);
-  --amber-600: #ff6a00;
-  --amber-500: #ff8a00;
-  --amber-300: #ffc38a;
+  --amber-600: #F77E2D;
+  --amber-500: #FF8E40;
+  --amber-300: #FFC8A0;
 }
 
 /* Base styles */
@@ -200,11 +211,11 @@ button.button:not(.calendar-button),
   &:focus-visible {
     outline: 3px solid var(--amber-600);
     outline-offset: 2px;
-    box-shadow: 
-      0 0 0 3px var(--amber-600),
-      0 0 20px rgba(255, 106, 0, 0.6),
-      0 0 40px rgba(255, 106, 0, 0.4),
-      0 0 60px rgba(255, 106, 0, 0.2);
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px var(--amber-500),
+      0 8px 26px rgba(0,0,0,.18),
+      0 0 36px color-mix(in srgb, var(--amber-500) 35%, transparent);
   }
 
   /* Hover styles - intensified orange glow */
@@ -212,15 +223,15 @@ button.button:not(.calendar-button),
     transform: translateY(-2px);
     background: linear-gradient(
       135deg,
-      #ff7a00,
-      #ff9a00,
-      #ffd38a,
-      #ff9a00
+      var(--amber-600) 0%,
+      var(--amber-500) 45%,
+      var(--amber-300) 100%
     );
-    box-shadow: 
-      0 0 30px rgba(255, 106, 0, 0.7),
-      0 0 50px rgba(255, 106, 0, 0.5),
-      0 0 70px rgba(255, 106, 0, 0.3);
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px var(--amber-500),
+      0 8px 26px rgba(0,0,0,.18),
+      0 0 36px color-mix(in srgb, var(--amber-500) 35%, transparent);
   }
 
   /* Orange glow effect layer */
@@ -233,11 +244,10 @@ button.button:not(.calendar-button),
     bottom: -2px;
     background: conic-gradient(
       from 0deg,
-      var(--amber-600),
-      var(--amber-500),
-      var(--amber-300),
-      var(--amber-500),
-      var(--amber-600)
+      var(--amber-600) 0%,
+      var(--amber-500) 35%,
+      var(--amber-300) 70%,
+      var(--amber-600) 100%
     );
     border-radius: 9999px;
     z-index: -1;
@@ -256,11 +266,10 @@ button.button:not(.calendar-button),
     bottom: -4px;
     background: conic-gradient(
       from 0deg,
-      #ff7a00,
-      #ff9a00,
-      #ffd38a,
-      #ff9a00,
-      #ff7a00
+      var(--amber-600) 0%,
+      var(--amber-500) 35%,
+      var(--amber-300) 70%,
+      var(--amber-600) 100%
     );
     border-radius: 9999px;
     z-index: -2;
