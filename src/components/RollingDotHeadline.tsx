@@ -158,8 +158,8 @@ export default function RollingDotHeadline({
 
   // Keyframes for the rolling dot
   let dotInitial = { x: -12, y: 0, rotate: 0 } as { x: number; y: number; rotate: number };
-  let dotAnimate = { x: [] as number[], y: [] as number[], rotate: [0, 90, 180, 270, 360, 450, 540, 630, 720] };
-  let dotTimes: number[] = [];
+  const dotAnimate = { x: [] as number[], y: [] as number[], rotate: [0, 90, 180, 270, 360, 450, 540, 630, 720] };
+  const dotTimes: number[] = [];
 
   if (textPositions.length > 0) {
     if (renderMobile && lineEnds.length >= 1) {
@@ -176,7 +176,7 @@ export default function RollingDotHeadline({
       dotInitial = { x: startX, y: y1, rotate: 0 };
       dotAnimate.x = [startX, end1X, end1X, end2X, end2X, end3X];
       dotAnimate.y = [y1, y1, y2, y2, y3, y3];
-      dotTimes = [0, 0.33, 0.34, 0.66, 0.67, 1];
+      dotTimes.push(0, 0.33, 0.34, 0.66, 0.67, 1);
     } else {
       // Desktop/simple path
       const first = textPositions[0];
@@ -188,7 +188,7 @@ export default function RollingDotHeadline({
       dotInitial = { x: startX, y: yStart, rotate: 0 };
       dotAnimate.x = [startX, endX];
       dotAnimate.y = [yStart, yEnd];
-      dotTimes = [0, 1];
+      dotTimes.push(0, 1);
     }
   }
 
