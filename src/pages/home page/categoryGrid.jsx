@@ -10,7 +10,7 @@ export default function CategoryGrid() {
     { name: "Events", count: "300+" },
     { name: "Boats", count: "120+" },
     { name: "Office", count: "400+" },
-    { name: "Furniture", count: "2,000+" },
+    { name: "Furniture", count: "2,0000+" },
   ]), []);
 
   const [index, setIndex] = useState(0);
