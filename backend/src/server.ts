@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 // Railway automatically injects PORT environment variable
 // Do not hard-code a port - Railway will set this automatically
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(express.json());
