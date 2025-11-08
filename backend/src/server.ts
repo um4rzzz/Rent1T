@@ -11,7 +11,7 @@ import googleAuthRoutes from './routes/authGoogle';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = parseInt(process.env.PORT || '5001', 10);
 
 app.use(cors());
 app.use(express.json());

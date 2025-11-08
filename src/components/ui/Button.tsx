@@ -185,11 +185,13 @@ const StyledButton = styled.button<ButtonProps>`
 
 export const Button: React.FC<ButtonProps> = ({ 
   children, 
-  variant: _variant = 'primary', 
+  variant = 'primary', 
   size = 'md', 
   className = '',
   ...props 
 }) => {
+  // variant is available for future use if needed
+  void variant;
   return (
     <StyledButton
       className={`button ${className}`}

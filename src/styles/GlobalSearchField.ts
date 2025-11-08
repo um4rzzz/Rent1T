@@ -1,9 +1,10 @@
-import { createGlobalStyle, keyframes } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 
-const breathe = keyframes`
-  0%,100% { box-shadow: 0 0 0 rgba(255,138,0,0), 0 0 0 rgba(255,208,153,0); }
-  50%     { box-shadow: 0 0 24px rgba(255,138,0,.28), 0 0 60px rgba(255,208,153,.18); }
-`;
+// breathe animation removed - not currently used
+// const breathe = keyframes`
+//   0%,100% { box-shadow: 0 0 0 rgba(255,138,0,0), 0 0 0 rgba(255,208,153,0); }
+//   50%     { box-shadow: 0 0 24px rgba(255,138,0,.28), 0 0 60px rgba(255,208,153,.18); }
+// `;
 
 export const GlobalSearchField = createGlobalStyle`
   :root{
