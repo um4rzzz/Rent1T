@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon --watch src -e ts,js --exec ts-node --transpile-only src/server.ts",
-    "start": "tsc && node dist/server.js"
+    "start": "node --loader ts-node/esm src/server.ts"
   },
   "dependencies": {
     "apollo-server-express": "^3.13.0",
