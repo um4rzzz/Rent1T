@@ -12,8 +12,8 @@ dotenv.config();
 
 const app = express();
 // Railway automatically injects PORT environment variable
-// Use 5001 as fallback for local development (Railway will override this)
-const PORT = parseInt(process.env.PORT || '5001', 10);
+// Do not hard-code a port - Railway will set this automatically
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -48,14 +48,10 @@ async function startApollo() {
   }
 }
 
-// Start server regardless of Apollo status
-// This ensures the REST API endpoints (like /api/auth/google) are always available
-// Railway requires listening on process.env.PORT (automatically set by Railway)
+// Start server - Railway requires this exact pattern
+// Railway automatically injects its own $PORT environment variable
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 REST API available at /api`);
-  console.log(`🏥 Health check: /health`);
-  console.log(`🔐 Google OAuth: /api/auth/google`);
+  console.log(`Server running on port ${PORT}`);
   
   // Start Apollo in the background (non-blocking)
   startApollo().catch((error) => {
