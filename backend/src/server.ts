@@ -11,6 +11,8 @@ import googleAuthRoutes from './routes/authGoogle';
 dotenv.config();
 
 const app = express();
+// Railway automatically injects PORT environment variable
+// Use 5001 as fallback for local development (Railway will override this)
 const PORT = parseInt(process.env.PORT || '5001', 10);
 
 app.use(cors());
@@ -48,11 +50,12 @@ async function startApollo() {
 
 // Start server regardless of Apollo status
 // This ensures the REST API endpoints (like /api/auth/google) are always available
-app.listen(PORT, '0.0.0.0', () => {
+// Railway requires listening on process.env.PORT (automatically set by Railway)
+app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 REST API available at http://0.0.0.0:${PORT}/api`);
-  console.log(`🏥 Health check: http://0.0.0.0:${PORT}/health`);
-  console.log(`🔐 Google OAuth: http://0.0.0.0:${PORT}/api/auth/google`);
+  console.log(`📡 REST API available at /api`);
+  console.log(`🏥 Health check: /health`);
+  console.log(`🔐 Google OAuth: /api/auth/google`);
   
   // Start Apollo in the background (non-blocking)
   startApollo().catch((error) => {
