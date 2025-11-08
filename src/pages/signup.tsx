@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Container, Box, Heading, Input, VStack, Text, Link } from "@chakra-ui/react";
 import Button from "../components/ui/Button";
 
+// Get the backend URL from environment variable
+// In production, this MUST be set to your backend API URL (e.g., https://your-backend.railway.app/api/auth/google)
+// Set NEXT_PUBLIC_GOOGLE_OAUTH_URL in Vercel environment variables
 const GOOGLE_OAUTH_URL = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL || "http://localhost:5001/api/auth/google";
 
 export default function SignUp() {
@@ -13,6 +16,18 @@ export default function SignUp() {
   const [submitted, setSubmitted] = useState(false);
 
   const handleGoogleSignIn = () => {
+    // Check if we're in production and the URL is still pointing to localhost
+    if (typeof window !== 'undefined') {
+      const isProduction = !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1');
+      const isLocalhostUrl = GOOGLE_OAUTH_URL.includes('localhost') || GOOGLE_OAUTH_URL.includes('127.0.0.1');
+      
+      if (isProduction && isLocalhostUrl) {
+        setError("Google authentication is not properly configured for production. Please set NEXT_PUBLIC_GOOGLE_OAUTH_URL environment variable.");
+        console.error('Production environment detected but GOOGLE_OAUTH_URL points to localhost:', GOOGLE_OAUTH_URL);
+        return;
+      }
+    }
+    
     window.location.href = GOOGLE_OAUTH_URL;
   };
 
