@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import typeDefs from './graphql/schema';
@@ -10,7 +10,7 @@ import './config/passport';
 import googleAuthRoutes from './routes/authGoogle';
 dotenv.config();
 
-const app = express();
+const app: Application = express();
 // Railway automatically injects PORT environment variable
 // Do not hard-code a port - Railway will set this automatically
 const PORT = process.env.PORT || 5001;
@@ -40,7 +40,8 @@ async function startApollo() {
   try {
     const apollo = new ApolloServer({ typeDefs, resolvers });
     await apollo.start();
-    apollo.applyMiddleware({ app, path: '/graphql' });
+    // Type assertion needed due to version mismatch between Apollo Server and Express types
+    apollo.applyMiddleware({ app: app as any, path: '/graphql' });
     console.log(`✅ GraphQL playground ready at http://localhost:${PORT}/graphql`);
   } catch (error) {
     console.error('⚠️  Failed to start Apollo Server:', error);

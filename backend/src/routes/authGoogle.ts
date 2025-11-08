@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Router } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.all('/google', (req, res, next) => {
   if (req.method !== 'GET') {
