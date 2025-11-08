@@ -4,23 +4,24 @@
   "description": "Backend for Rent1T platform.",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon --watch src -e ts,js --exec ts-node src/server.ts",
+    "dev": "nodemon --watch src -e ts,js --exec ts-node --transpile-only src/server.ts",
     "start": "tsc && node dist/server.js"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "mysql2": "^3.7.0",
-    "dotenv": "^16.3.1",
-    "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2",
     "apollo-server-express": "^3.13.0",
-    "graphql": "^16.7.1",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "express-session": "^1.17.3",
+    "graphql": "^16.7.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.7.0",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
-    "express-session": "^1.17.3"
+    "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"

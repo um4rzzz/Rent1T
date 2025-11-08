@@ -28,6 +28,10 @@ backend/
 PORT=5000
 MYSQL_URL=your_mysql_connection_string
 JWT_SECRET=your_jwt_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+FRONTEND_URL=http://localhost:3000
 ```
 5. Run dev: `npm run dev` (uses nodemon+ts-node)
 
@@ -49,8 +53,9 @@ JWT_SECRET=your_jwt_secret
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_name VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NULL,
   email VARCHAR(255) UNIQUE,
+  google_id VARCHAR(255) UNIQUE,
   role ENUM('tenant','owner','admin') DEFAULT 'tenant',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -64,6 +69,6 @@ CREATE TABLE users (
 ## Google Sign-In (Stateless, JWT)
 - Logging in with Google now issues a JWT directly (no cookies or express-session)
 - On successful login, Google OAuth callback will redirect to:
-  `https://rent1t.vercel.app/login-success?token=...`
-- The frontend should read the token and store it in localStorage for API authentication.
-- Only `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, and `JWT_SECRET` env vars needed.
+  `<FRONTEND_URL>/login-success?token=...` (defaults to `http://localhost:3000` for local dev)
+- The frontend `login-success` page reads the token, stores it in localStorage, and redirects to `/` (homepage)
+- Required env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, `JWT_SECRET`, `FRONTEND_URL` (optional, defaults to localhost:3000)
