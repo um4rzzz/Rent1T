@@ -18,6 +18,15 @@ app.use(express.json());
 
 app.use(passport.initialize());
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 app.use('/api/auth', googleAuthRoutes);
 
 // Error handler
@@ -26,14 +35,27 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 });
 
 async function startApollo() {
-  const apollo = new ApolloServer({ typeDefs, resolvers });
-  await apollo.start();
-  apollo.applyMiddleware({ app, path: '/graphql' });
+  try {
+    const apollo = new ApolloServer({ typeDefs, resolvers });
+    await apollo.start();
+    apollo.applyMiddleware({ app, path: '/graphql' });
+    console.log(`✅ GraphQL playground ready at http://localhost:${PORT}/graphql`);
+  } catch (error) {
+    console.error('⚠️  Failed to start Apollo Server:', error);
+    console.error('⚠️  Server will continue without GraphQL endpoint');
+  }
 }
 
-startApollo().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`GraphQL playground ready at http://localhost:${PORT}/graphql`);
+// Start server regardless of Apollo status
+// This ensures the REST API endpoints (like /api/auth/google) are always available
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 REST API available at http://0.0.0.0:${PORT}/api`);
+  console.log(`🏥 Health check: http://0.0.0.0:${PORT}/health`);
+  console.log(`🔐 Google OAuth: http://0.0.0.0:${PORT}/api/auth/google`);
+  
+  // Start Apollo in the background (non-blocking)
+  startApollo().catch((error) => {
+    console.error('Failed to initialize Apollo Server:', error);
   });
 });
