@@ -13,9 +13,9 @@ dotenv.config();
 const app: Application = express();
 // Railway automatically injects PORT environment variable
 // Do not hard-code a port - Railway will set this automatically
-const PORT = process.env.PORT || 5001;
+const PORT = parseInt(process.env.PORT || '8080', 10);
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 app.use(passport.initialize());
@@ -51,11 +51,7 @@ async function startApollo() {
 
 // Start server - Railway requires this exact pattern
 // Railway automatically injects its own $PORT environment variable
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  
-  // Start Apollo in the background (non-blocking)
-  startApollo().catch((error) => {
-    console.error('Failed to initialize Apollo Server:', error);
-  });
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  startApollo();
 });
