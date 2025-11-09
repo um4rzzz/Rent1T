@@ -4,60 +4,13 @@ import jwt from 'jsonwebtoken';
 
 const router: Router = express.Router();
 
-router.all('/google', (req, res, next) => {
-  if (req.method !== 'GET') {
-    return res.status(405).json({
-      message: 'Passport Google OAuth expects a GET request to /api/auth/google',
-      receivedMethod: req.method,
-      hint: 'Ensure the frontend uses window.location.href or a normal link to hit this URL.'
-    });
-  }
-  return next();
-});
-
-router.get('/google', (req, res, next) => {
-  // Check if Google OAuth is properly configured
-  const hasClientId = !!process.env.GOOGLE_CLIENT_ID;
-  const hasClientSecret = !!process.env.GOOGLE_CLIENT_SECRET;
-  const hasCallbackUrl = !!process.env.GOOGLE_CALLBACK_URL;
-  
-  if (!hasClientId || !hasClientSecret || !hasCallbackUrl) {
-    return res.status(500).send(`
-      <!DOCTYPE html>
-      <html>
-        <head><title>OAuth Configuration Error</title></head>
-        <body style="font-family: Arial, sans-serif; padding: 40px; text-align: center;">
-          <h1 style="color: #d32f2f;">Google OAuth Configuration Error</h1>
-          <p>Please set the following environment variables in your <code>backend/.env</code> file:</p>
-          <ul style="text-align: left; display: inline-block;">
-            <li><code>GOOGLE_CLIENT_ID</code></li>
-            <li><code>GOOGLE_CLIENT_SECRET</code></li>
-            <li><code>GOOGLE_CALLBACK_URL</code></li>
-          </ul>
-          <p style="margin-top: 30px; color: #666;">
-            Example: <code>GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback</code>
-          </p>
-        </body>
-      </html>
-    `);
-  }
-  
-  try {
-    passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
-  } catch (error: any) {
-    console.error('Passport authentication error:', error);
-    res.status(500).send(`
-      <!DOCTYPE html>
-      <html>
-        <head><title>OAuth Error</title></head>
-        <body style="font-family: Arial, sans-serif; padding: 40px; text-align: center;">
-          <h1 style="color: #d32f2f;">OAuth Error</h1>
-          <p>${error.message || 'An error occurred during Google OAuth setup'}</p>
-        </body>
-      </html>
-    `);
-  }
-});
+// STEP 1: Redirect user to Google for consent
+// ✅ REQUIRED: scope parameter must be included
+router.get('/google', 
+  passport.authenticate('google', { 
+    scope: ['profile', 'email']   // ✅ REQUIRED - this fixes the "Missing required parameter: scope" error
+  })
+);
 
 router.get(
   '/google/callback',
